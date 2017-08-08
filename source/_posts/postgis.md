@@ -36,7 +36,7 @@ test=# \dx
 ### 在数据中插入geography类型
 
 在表中添加geography类型字段:
-`alter table story add where_is GEOGRAPHY;`
+`alter table test add where_is GEOGRAPHY;`
 
 查看表结构
 
@@ -97,5 +97,16 @@ NOTICE:  Coordinate values were coerced into range [-180 -90, 180 90] for GEOGRA
 (1 row)
 ```
 
+### 最后
+
+加个索引:
+
+`CREATE INDEX where_is_gix ON test USING gist(where_is);`
+
+### 参考资料
+
+[Getting Started With PostGIS](http://www.vertabelo.com/blog/technical-articles/getting-started-with-postgis-your-first-steps-with-the-geography-data-type)
+[PostGIS官方文档](http://postgis.net/docs/)
+[PostgreSQL安装PostGIS插件](http://www.jianshu.com/p/3ef6cb371bc0)
 
 
