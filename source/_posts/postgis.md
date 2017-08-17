@@ -103,6 +103,33 @@ NOTICE:  Coordinate values were coerced into range [-180 -90, 180 90] for GEOGRA
 
 `CREATE INDEX where_is_gix ON test USING gist(where_is);`
 
+使用索引:
+```sql
+-- 这样并不会用到索引
+test=# explain select ST_DISTANCE(test.where_is, ST_POINT(39, 113)) as distance from test order by distance limit 20;
+
+NOTICE:  Coordinate values were coerced into range [-180 -90, 180 90] for GEOGRAPHY
+                                                               QUERY PLAN
+----------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=188.21..188.26 rows=20 width=56)
+   ->  Sort  (cost=188.21..189.61 rows=559 width=56)
+         Sort Key: (_st_distance(where_is, '0101000020E610000000000000008043400000000000C05040'::geography, 0::double precision, true))
+         ->  Seq Scan on story  (cost=0.00..173.34 rows=559 width=56)
+(4 rows)
+```
+
+```sql
+-- 如下使用索引
+test=# explain select ST_DISTANCE(test.where_is, ST_POINT(39, 113)) as distance from story order by ST_POINT(39, 113) <-> test.where_is limit 20;
+NOTICE:  Coordinate values were coerced into range [-180 -90, 180 90] for GEOGRAPHY
+NOTICE:  Coordinate values were coerced into range [-180 -90, 180 90] for GEOGRAPHY
+                                            QUERY PLAN
+--------------------------------------------------------------------------------------------------
+ Limit  (cost=0.39..16.32 rows=20 width=56)
+   ->  Index Scan using where_is_gix on test  (cost=0.39..445.67 rows=559 width=56)
+         Order By: (where_is <-> '0101000020E610000000000000008043400000000000C05040'::geography)
+```
+
 ### 参考资料
 
 [Getting Started With PostGIS](http://www.vertabelo.com/blog/technical-articles/getting-started-with-postgis-your-first-steps-with-the-geography-data-type)
