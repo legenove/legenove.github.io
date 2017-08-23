@@ -6,9 +6,8 @@ categories:
 tags:
   - 数据库
   - postgresql
+  - postgis
 ---
-
-## 基于postgresql和postgis纪录地理位置，计算距离
 
 > PostGIS是PostgreSQL关系数据库的空间数据库扩展。增加了对地理类型的支持，允许在SQL中运行位置查询。
 > postgis安装这里就不在赘述，[官网](http://postgis.net/install/)有很详细的说明，这里主要是讲postgis地理对象的应用。
